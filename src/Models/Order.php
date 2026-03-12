@@ -16,23 +16,48 @@ final class Order
         try {
             $pdo->beginTransaction();
 
-            $pdo->exec("INSERT INTO orders (created_at) VALUES (NOW())");
+            $totalAmount = array_reduce(
+                $items,
+                fn($sum, $item) => $sum + ((float) $item['price_amount'] * (int) $item['quantity']),
+                0
+            );
+
+            $stmt = $pdo->prepare(
+                "INSERT INTO orders (total_amount, total_currency, created_at) 
+                 VALUES (?, ?, NOW())"
+            );
+            $stmt->execute([$totalAmount, $items[0]['currency_label'] ?? 'USD']);
             $orderId = (int) $pdo->lastInsertId();
 
-            $stmt = $pdo->prepare("
+
+            $itemStmt = $pdo->prepare("
                 INSERT INTO order_items 
-                (order_id, product_id, quantity, price_amount, currency_label, currency_symbol)
-                VALUES (?, ?, ?, ?, ?, ?)
+                (order_id, product_id, product_name, attribute_values, quantity, paid_amount, paid_currency)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ");
+
+            $dataStmt = $pdo->prepare("
+                SELECT p.name as product_name, pr.amount 
+                FROM products p 
+                LEFT JOIN prices pr ON p.id = pr.product_id AND pr.currency = ?
+                WHERE p.id = ?
             ");
 
             foreach ($items as $item) {
-                $stmt->execute([
+                $dataStmt->execute([$item['currency_label'], $item['product_id']]);
+                $productData = $dataStmt->fetch();
+
+                $productName = $productData['product_name'] ?? $item['product_id'];
+                $paidAmount = $productData['amount'] ?? (float) $item['price_amount'];
+
+                $itemStmt->execute([
                     $orderId,
                     $item['product_id'],
-                    $item['quantity'],
-                    $item['price_amount'],
-                    $item['currency_label'],
-                    $item['currency_symbol']
+                    $productName,
+                    json_encode($item['attributes'] ?? []),
+                    (int) $item['quantity'],
+                    (float) $paidAmount,
+                    $item['currency_label']
                 ]);
             }
 

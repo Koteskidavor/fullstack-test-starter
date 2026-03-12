@@ -7,12 +7,12 @@ use App\Models\Order;
 
 final class OrderResolver
 {
-    public static function createOrder(array $input): array
+    public static function createOrder(array $items): array
     {
-        $orderId = Order::create($input['items']);
+        $orderId = Order::create($items);
 
         return [
-            'id' => $orderId,
+            'id' => (string) $orderId,
             'message' => 'Order created successfully',
         ];
     }

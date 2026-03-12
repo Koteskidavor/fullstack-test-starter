@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Schema;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -60,7 +61,19 @@ final class GraphQL
             echo json_encode($result->toArray());
         } catch (\Throwable $e) {
             http_response_code(500);
-            echo json_encode(['errors' => [['message' => $e->getMessage()]]]);
+
+            error_log("GraphQL Exception: " . $e->getMessage());
+            error_log("Stack: " . $e->getTraceAsString());
+
+            echo json_encode([
+                'errors' => [
+                    [
+                        'message' => $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]
+                ]
+            ]);
         }
     }
 
@@ -87,7 +100,13 @@ final class GraphQL
             'name' => 'Price',
             'fields' => [
                 'amount' => Type::float(),
-                'currency' => Type::string(),
+                'currency' => new ObjectType([
+                    'name' => 'Currency',
+                    'fields' => [
+                        'label' => Type::string(),
+                        'symbol' => Type::string(),
+                    ]
+                ]),
             ],
         ]);
 
@@ -136,6 +155,31 @@ final class GraphQL
         ]);
     }
 
+    private static function orderAttributeInputType(): InputObjectType
+    {
+        return new InputObjectType([
+            'name' => 'OrderAttributeInput',
+            'fields' => [
+                'id' => Type::nonNull(Type::string()),
+                'value' => Type::nonNull(Type::string()),
+            ]
+        ]);
+    }
+
+    private static function orderItemInputType(): InputObjectType
+    {
+        return new InputObjectType([
+            'name' => 'OrderItemInput',
+            'fields' => [
+                'product_id' => Type::nonNull(Type::string()),
+                'quantity' => Type::nonNull(Type::int()),
+                'price_amount' => Type::nonNull(Type::float()),
+                'currency_label' => Type::nonNull(Type::string()),
+                'currency_symbol' => Type::nonNull(Type::string()),
+                'attributes' => Type::listOf(self::orderAttributeInputType()),
+            ]
+        ]);
+    }
     private static function mutationType(): ObjectType
     {
         return new ObjectType([
@@ -150,9 +194,9 @@ final class GraphQL
                         ]
                     ]),
                     'args' => [
-                        'items' => Type::listOf(Type::string())
+                        'items' => Type::nonNull(Type::listOf(Type::nonNull(self::orderItemInputType()))),
                     ],
-                    'resolve' => fn($root, $args) => OrderResolver::createOrder($args)
+                    'resolve' => fn($root, $args) => OrderResolver::createOrder($args['items'])
                 ]
             ]
         ]);

@@ -18,7 +18,7 @@ class Database
             $db = $_ENV['DB_NAME'];
             $user = $_ENV['DB_USER'];
             $pass = $_ENV['DB_PASS'];
-            $charset = $_ENV['DB_CHARSET'];
+            $charset = $_ENV['DB_CHARSET'] ?? 'utf8mb4';
 
 
             $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
