@@ -116,18 +116,19 @@ final class DataImporter
                         'type' => $attr['type']
                     ]);
 
-            foreach ($attr['items'] ?? [] as $item) {
+            foreach ($attr['items'] ?? [] as $index => $item) {
 
                 $this->pdo->prepare(
                     'INSERT IGNORE INTO product_attributes
-                     (id, product_id, attribute_id, displayValue, value)
-                     VALUES (:id, :product_id, :attribute_id, :displayValue, :value)'
+                     (id, product_id, attribute_id, displayValue, value, sort_order)
+                     VALUES (:id, :product_id, :attribute_id, :displayValue, :value, :sort_order)'
                 )->execute([
                             'id' => $prod['id'] . '-' . $attr['id'] . '-' . $item['id'],
                             'product_id' => $prod['id'],
                             'attribute_id' => $attr['id'],
                             'displayValue' => $item['displayValue'],
-                            'value' => $item['value']
+                            'value' => $item['value'],
+                            'sort_order' => $index
                         ]);
             }
         }

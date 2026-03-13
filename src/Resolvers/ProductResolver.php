@@ -58,6 +58,7 @@ final class ProductResolver
             FROM product_attributes pa
             JOIN attributes a ON pa.attribute_id = a.id
             WHERE pa.product_id = ?
+            ORDER BY pa.sort_order ASC
         ");
         $attrStmt->execute([$product['id']]);
 
