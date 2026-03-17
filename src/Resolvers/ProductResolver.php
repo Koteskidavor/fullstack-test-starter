@@ -1,10 +1,10 @@
 <?php
-
+declare(strict_types=1);
 namespace App\Resolvers;
 
 use App\Database;
+use App\Factories\ProductFactory;
 use PDO;
-
 
 final class ProductResolver
 {
@@ -12,30 +12,37 @@ final class ProductResolver
     {
         $pdo = Database::getConnection();
         $stmt = $pdo->query("SELECT * FROM products");
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $productsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        foreach ($products as &$product) {
-            $product = self::enrichProduct($product, $pdo);
+        $products = [];
+        foreach ($productsData as $productData) {
+            $productData = self::fetchFullProductData($productData, $pdo);
+            $product = ProductFactory::create($productData);
+            $products[] = $product->toArray();
         }
 
         return $products;
-
     }
+
     public static function resolveByID(string $id): ?array
     {
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
         $stmt->execute([$id]);
-        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+        $productData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $product ? self::enrichProduct($product, $pdo) : null;
+        if (!$productData) {
+            return null;
+        }
+
+        $productData = self::fetchFullProductData($productData, $pdo);
+        $product = ProductFactory::create($productData);
+
+        return $product->toArray();
     }
 
-    private static function enrichProduct(array $product, PDO $pdo): array
+    private static function fetchFullProductData(array $product, PDO $pdo): array
     {
-        $product['gallery'] = json_decode($product['gallery'], true) ?? [];
-        $product['inStock'] = (bool) $product['inStock'];
-
         $priceStmt = $pdo->prepare("
             SELECT p.amount, p.currency as label, COALESCE(c.symbol, '$') as symbol
             FROM prices p
@@ -45,7 +52,7 @@ final class ProductResolver
         $priceStmt->execute([$product['id']]);
 
         $prices = $priceStmt->fetchAll(PDO::FETCH_ASSOC);
-        $product['prices'] = array_map(fn($row) => [
+        $product['db_prices'] = array_map(fn($row) => [
             'amount' => (float) $row['amount'],
             'currency' => [
                 'label' => $row['label'],
@@ -79,7 +86,7 @@ final class ProductResolver
             ];
         }
 
-        $product['attributes'] = array_values($attrs);
+        $product['db_attributes'] = array_values($attrs);
 
         return $product;
     }
