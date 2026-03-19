@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Sitemap: http://localhost:5173/category/all/sitemap.xml
+Sitemap: http://localhost:5173/category/tech/sitemap.xml
+Sitemap: http://localhost:5173/category/clothes/sitemap.xml

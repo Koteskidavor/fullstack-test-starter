@@ -8,10 +8,17 @@ use PDO;
 
 final class ProductResolver
 {
-    public static function resolveAll(): array
+    public static function resolveAll(?string $category = null): array
     {
         $pdo = Database::getConnection();
-        $stmt = $pdo->query("SELECT * FROM products");
+
+        if ($category && $category !== 'all') {
+            $stmt = $pdo->prepare("SELECT * FROM products WHERE category = ?");
+            $stmt->execute([$category]);
+        } else {
+            $stmt = $pdo->query("SELECT * FROM products");
+        }
+
         $productsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $products = [];

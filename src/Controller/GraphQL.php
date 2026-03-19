@@ -62,9 +62,6 @@ final class GraphQL
         } catch (\Throwable $e) {
             http_response_code(500);
 
-            error_log("GraphQL Exception: " . $e->getMessage());
-            error_log("Stack: " . $e->getTraceAsString());
-
             echo json_encode([
                 'errors' => [
                     [
@@ -138,7 +135,10 @@ final class GraphQL
             'fields' => [
                 'products' => [
                     'type' => Type::listOf($productType),
-                    'resolve' => fn() => ProductResolver::resolveAll()
+                    'args' => [
+                        'category' => Type::string(),
+                    ],
+                    'resolve' => fn($rootValue, $args) => ProductResolver::resolveAll($args['category'] ?? null)
                 ],
                 'product' => [
                     'type' => $productType,

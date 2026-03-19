@@ -32,6 +32,7 @@ CREATE TABLE product_attributes (
     attribute_id VARCHAR(255),
     displayValue VARCHAR(255) NOT NULL,
     value VARCHAR(255) NOT NULL,
+    sort_order INT DEFAULT 0,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     FOREIGN KEY (attribute_id) REFERENCES attributes(id) ON DELETE SET NULL,
     CONSTRAINT unique_product_attribute_value UNIQUE (product_id, attribute_id, value)

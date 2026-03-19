@@ -1,0 +1,118 @@
+.cart-backdrop {
+    position: fixed;
+    top: 78px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(57, 55, 72, 0.22);
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cart-overlay {
+    width: 325px;
+    max-height: 628px;
+    background: #FFFFFF;
+    padding: 32px 16px 32px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-right: 72px;
+    overscroll-behavior: contain;
+    overflow-y: auto;
+}
+
+.cart-overlay::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cart-overlay::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.cart-overlay__title {
+    font-family: 'Raleway', sans-serif;
+    font-size: 16px;
+    line-height: 160%;
+    color: #1D1F22;
+}
+
+.cart-overlay__title strong {
+    font-weight: 700;
+}
+
+.cart-overlay__items {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.cart-overlay__empty {
+    text-align: center;
+    color: #777;
+    margin-top: 20px;
+}
+
+.cart-overlay__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.cart-overlay__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-overlay__total-label {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 18px;
+    color: #1D1F22;
+}
+
+.cart-overlay__total-amount {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 160%;
+    color: #1D1F22;
+}
+
+.cart-overlay__actions {
+    display: flex;
+    justify-content: center;
+}
+
+.cart-overlay__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 43px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 120%;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    width: 100%;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.cart-overlay__btn--checkout {
+    background: #5ECE7B;
+    color: #FFFFFF;
+}
+
+.cart-overlay__btn--checkout:hover:not(:disabled) {
+    background: #4ab867;
+}
+
+.cart-overlay__btn--checkout:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    color: #666666;
+}

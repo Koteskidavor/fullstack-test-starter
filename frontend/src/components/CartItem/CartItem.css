@@ -1,0 +1,142 @@
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    align-items: stretch;
+}
+
+.cart-item__details {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-right: 10px;
+    max-width: 136px;
+}
+
+.cart-item__name {
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 160%;
+    color: #1D1F22;
+    margin-bottom: 4px;
+}
+
+.cart-item__price {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 160%;
+    color: #1D1F22;
+    margin-bottom: 12px;
+}
+
+.cart-item__attributes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cart-item__attribute {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cart-item__attribute-name {
+    font-family: 'Raleway', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+}
+
+.cart-item__attribute-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 4px;
+}
+
+.cart-item__attribute-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: #FFFFFF;
+}
+
+.cart-item__attribute-btn--text {
+    min-width: 24px;
+    height: 24px;
+    padding: 0 4px;
+    border: 1px solid #1D1F22;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 160%;
+    color: #1D1F22;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.cart-item__attribute-btn--text.selected {
+    background: #1D1F22;
+    color: #FFFFFF;
+}
+
+.cart-item__attribute-btn--color {
+    width: 16px;
+    height: 16px;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+}
+
+.cart-item__attribute-btn--color.selected {
+    border: 1px solid white;
+    outline: 1px solid #5ECE7B;
+}
+
+.cart-item__controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 8px;
+}
+
+.cart-item__qty-btn {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #1D1F22;
+    background: #FFFFFF;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.cart-item__qty-btn:hover {
+    background: #f0f0f0;
+}
+
+.cart-item__qty-value {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 160%;
+}
+
+.cart-item__image-container {
+    width: 121px;
+    height: 190px;
+    background-color: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-item__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}

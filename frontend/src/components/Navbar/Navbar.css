@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;600&display=swap');
+
+.navbar {
+    width: 100%;
+    height: 80px;
+    background: #ffffff;
+    display: flex;
+    position: relative;
+    box-sizing: border-box;
+    z-index: 1100;
+}
+
+.navbar__container {
+    display: flex;
+    position: flex-end;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar__left {
+    display: flex;
+    list-style: none;
+    padding-left: 10vw;
+    align-items: flex-end;
+}
+
+.navbar__item {
+    height: 80px;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    box-sizing: border-box;
+    font-size: 16px;
+    position: relative;
+    text-decoration: none;
+}
+
+.navbar__itemText {
+    font-family: 'Raleway', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 120%;
+    text-align: center;
+    text-transform: uppercase;
+    color: #1D1F22;
+}
+
+.navbar__item.active .navbar__itemText {
+    color: #5ECE7B;
+    font-weight: 600;
+}
+
+.navbar__item.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: -2px;
+    right: -2px;
+    height: 2px;
+    background-color: #5ECE7B;
+    color: #5ECE7B;
+}
+
+.navbar__logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 41px;
+    height: 41px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo__img {
+    width: 41px;
+    height: 41px;
+}
+
+.navbar__right {
+    position: absolute;
+    right: 10vw;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.cart__btn {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    background: unset;
+    border: none;
+    position: relative;
+}
+
+.cart__icon {
+    width: 20px;
+    height: 20px;
+}
+
+.cart__badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: #1D1F22;
+    color: #FFFFFF;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16px;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+}

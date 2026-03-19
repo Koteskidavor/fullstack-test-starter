@@ -1,0 +1,23 @@
+.status-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    font-size: 24px;
+    font-weight: 500;
+    color: #1D1F22;
+    letter-spacing: 0.05em;
+    animation: statusMessageFadeIn 0.5s ease-out;
+}
+
+@keyframes statusMessageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
