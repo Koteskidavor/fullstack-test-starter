@@ -59,7 +59,8 @@ final class GraphQL
             );
 
             echo json_encode($result->toArray());
-        } catch (\Throwable $e) {
+        }
+        catch (\Throwable $e) {
             http_response_code(500);
 
             echo json_encode([
@@ -79,7 +80,7 @@ final class GraphQL
         $attributeType = new ObjectType([
             'name' => 'Attribute',
             'fields' => [
-                'id' => Type::nonNull(Type::string()),
+                'id' => Type::nonNull(fn() => Type::string()),
                 'name' => Type::string(),
                 'type' => Type::string(),
                 'items' => Type::listOf(new ObjectType([
@@ -110,15 +111,18 @@ final class GraphQL
         $productType = new ObjectType([
             'name' => 'Product',
             'fields' => [
-                'id' => Type::nonNull(Type::string()),
+                'id' => Type::nonNull(fn() => Type::string()),
                 'name' => Type::string(),
                 'inStock' => Type::boolean(),
-                'gallery' => Type::listOf(Type::string()),
+                'gallery' => Type::listOf(fn() => Type::string()),
                 'description' => Type::string(),
                 'category' => Type::string(),
                 'brand' => Type::string(),
-                'prices' => Type::listOf($priceType),
-                'attributes' => Type::listOf($attributeType),
+                'prices' => Type::listOf(fn() => $priceType),
+                'attributes' => [
+                    'type' => Type::listOf(fn() => $attributeType),
+                    'resolve' => fn($product) => \App\Resolvers\AttributeResolver::resolveByProductId($product['id'])
+                ],
             ],
         ]);
 
@@ -134,7 +138,7 @@ final class GraphQL
             'name' => 'Query',
             'fields' => [
                 'products' => [
-                    'type' => Type::listOf($productType),
+                    'type' => Type::listOf(fn() => $productType),
                     'args' => [
                         'category' => Type::string(),
                     ],
@@ -143,12 +147,12 @@ final class GraphQL
                 'product' => [
                     'type' => $productType,
                     'args' => [
-                        'id' => Type::nonNull(Type::string()),
+                        'id' => Type::nonNull(fn() => Type::string()),
                     ],
                     'resolve' => fn($root, $args) => ProductResolver::resolveByID($args['id'])
                 ],
                 'categories' => [
-                    'type' => Type::listOf($categoryType),
+                    'type' => Type::listOf(fn() => $categoryType),
                     'resolve' => fn() => CategoryResolver::resolveAll()
                 ],
             ],
@@ -160,8 +164,8 @@ final class GraphQL
         return new InputObjectType([
             'name' => 'OrderAttributeInput',
             'fields' => [
-                'id' => Type::nonNull(Type::string()),
-                'value' => Type::nonNull(Type::string()),
+                'id' => Type::nonNull(fn() => Type::string()),
+                'value' => Type::nonNull(fn() => Type::string()),
             ]
         ]);
     }
@@ -171,12 +175,12 @@ final class GraphQL
         return new InputObjectType([
             'name' => 'OrderItemInput',
             'fields' => [
-                'product_id' => Type::nonNull(Type::string()),
-                'quantity' => Type::nonNull(Type::int()),
-                'price_amount' => Type::nonNull(Type::float()),
-                'currency_label' => Type::nonNull(Type::string()),
-                'currency_symbol' => Type::nonNull(Type::string()),
-                'attributes' => Type::listOf(self::orderAttributeInputType()),
+                'product_id' => Type::nonNull(fn() => Type::string()),
+                'quantity' => Type::nonNull(fn() => Type::int()),
+                'price_amount' => Type::nonNull(fn() => Type::float()),
+                'currency_label' => Type::nonNull(fn() => Type::string()),
+                'currency_symbol' => Type::nonNull(fn() => Type::string()),
+                'attributes' => Type::listOf(fn() => self::orderAttributeInputType()),
             ]
         ]);
     }
@@ -194,7 +198,7 @@ final class GraphQL
                         ]
                     ]),
                     'args' => [
-                        'items' => Type::nonNull(Type::listOf(Type::nonNull(self::orderItemInputType()))),
+                        'items' => Type::nonNull(fn() => Type::listOf(fn() => Type::nonNull(fn() => self::orderItemInputType()))),
                     ],
                     'resolve' => fn($root, $args) => OrderResolver::createOrder($args['items'])
                 ]

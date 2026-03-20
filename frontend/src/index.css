@@ -11,3 +11,25 @@ body {
 * {
   box-sizing: border-box;
 }
+
+:root {
+  --navbar-height: 80px;
+  --page-padding: 10vw;
+  --font-size-base: 16px;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --navbar-height: 70px;
+    --page-padding: 5vw;
+    --font-size-base: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --navbar-height: 60px;
+    --page-padding: 16px;
+    --font-size-base: 14px;
+  }
+}

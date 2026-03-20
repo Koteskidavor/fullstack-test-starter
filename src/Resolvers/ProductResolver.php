@@ -15,7 +15,8 @@ final class ProductResolver
         if ($category && $category !== 'all') {
             $stmt = $pdo->prepare("SELECT * FROM products WHERE category = ?");
             $stmt->execute([$category]);
-        } else {
+        }
+        else {
             $stmt = $pdo->query("SELECT * FROM products");
         }
 
@@ -60,40 +61,12 @@ final class ProductResolver
 
         $prices = $priceStmt->fetchAll(PDO::FETCH_ASSOC);
         $product['db_prices'] = array_map(fn($row) => [
-            'amount' => (float) $row['amount'],
-            'currency' => [
-                'label' => $row['label'],
-                'symbol' => $row['symbol']
-            ]
+        'amount' => (float)$row['amount'],
+        'currency' => [
+        'label' => $row['label'],
+        'symbol' => $row['symbol']
+        ]
         ], $prices);
-
-        $attrStmt = $pdo->prepare("
-            SELECT a.id, a.name, a.type, pa.id as pa_id, pa.displayValue, pa.value
-            FROM product_attributes pa
-            JOIN attributes a ON pa.attribute_id = a.id
-            WHERE pa.product_id = ?
-            ORDER BY pa.sort_order ASC
-        ");
-        $attrStmt->execute([$product['id']]);
-
-        $attrs = [];
-        foreach ($attrStmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-            if (!isset($attrs[$row['id']])) {
-                $attrs[$row['id']] = [
-                    'id' => $row['id'],
-                    'name' => $row['name'],
-                    'type' => $row['type'],
-                    'items' => []
-                ];
-            }
-            $attrs[$row['id']]['items'][] = [
-                'id' => $row['pa_id'],
-                'displayValue' => $row['displayValue'],
-                'value' => $row['value']
-            ];
-        }
-
-        $product['db_attributes'] = array_values($attrs);
 
         return $product;
     }

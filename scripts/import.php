@@ -13,6 +13,7 @@ try {
     $importer->import(__DIR__ . '/../data.json');
 
     echo "Import successful!";
-} catch (Throwable $e) {
+}
+catch (Throwable $e) {
     echo "Import failed: " . $e->getMessage();
 }
