@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost/fullstack-test-starter/public/index.php';
+const API_URL = 'https://davork-scandiweb.infinityfree.me/public/index.php';
 
 export async function graphqlRequest<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
     const response = await fetch(API_URL, {

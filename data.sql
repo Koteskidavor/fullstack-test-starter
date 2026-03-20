@@ -1,9 +1,3 @@
-DROP DATABASE IF EXISTS scandiweb;
-CREATE DATABASE scandiweb;
-USE scandiweb;
-
--- CREATING TABLES --
-
 CREATE TABLE categories (
     name VARCHAR(255) PRIMARY KEY
 );
