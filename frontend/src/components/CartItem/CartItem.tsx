@@ -40,7 +40,7 @@ const CartItem = memo(function CartItem({ item, onQuantityChange }: CartItemProp
                                                 className={`cart-item__attribute-btn cart-item__attribute-btn--color ${isSelected ? 'selected' : ''}`}
                                                 style={{ backgroundColor: opt.value }}
                                                 aria-label={opt.displayValue}
-                                                data-testid={`cart-item-attribute-${kebabCase(attr.name)}-${opt.id}${isSelected ? '-selected' : ''}`}
+                                                data-testid={`cart-item-attribute-${kebabCase(attr.name)}-${opt.displayValue}${isSelected ? '-selected' : ''}`}
                                             />
                                         );
                                     }
@@ -49,7 +49,7 @@ const CartItem = memo(function CartItem({ item, onQuantityChange }: CartItemProp
                                         <div
                                             key={opt.id}
                                             className={`cart-item__attribute-btn cart-item__attribute-btn--text ${isSelected ? 'selected' : ''}`}
-                                            data-testid={`cart-item-attribute-${kebabCase(attr.name)}-${opt.id}${isSelected ? '-selected' : ''}`}
+                                            data-testid={`cart-item-attribute-${kebabCase(attr.name)}-${opt.displayValue}${isSelected ? '-selected' : ''}`}
                                         >
                                             {opt.value}
                                         </div>
