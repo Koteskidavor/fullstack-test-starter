@@ -14,6 +14,18 @@ use App\Resolvers\OrderResolver;
 
 final class GraphQL
 {
+    private static ?ObjectType $queryType = null;
+    private static ?ObjectType $mutationType = null;
+    private static ?ObjectType $attributeType = null;
+    private static ?ObjectType $attributeItemType = null;
+    private static ?ObjectType $priceType = null;
+    private static ?ObjectType $currencyType = null;
+    private static ?ObjectType $productType = null;
+    private static ?ObjectType $categoryType = null;
+    private static ?ObjectType $orderResponseType = null;
+    private static ?InputObjectType $orderAttributeInputType = null;
+    private static ?InputObjectType $orderItemInputType = null;
+
     public static function handle(): void
     {
         header('Content-Type: application/json');
@@ -75,84 +87,106 @@ final class GraphQL
         }
     }
 
-    private static function queryType(): ObjectType
+    private static function attributeType(): ObjectType
     {
-        $attributeType = new ObjectType([
+        return self::$attributeType ??= new ObjectType([
             'name' => 'Attribute',
             'fields' => [
                 'id' => Type::nonNull(fn() => Type::string()),
                 'name' => Type::string(),
                 'type' => Type::string(),
-                'items' => Type::listOf(new ObjectType([
-                    'name' => 'AttributeItem',
-                    'fields' => [
-                        'id' => Type::string(),
-                        'displayValue' => Type::string(),
-                        'value' => Type::string(),
-                    ],
-                ])),
+                'items' => Type::listOf(self::attributeItemType()),
             ],
         ]);
+    }
 
-        $priceType = new ObjectType([
+    private static function attributeItemType(): ObjectType
+    {
+        return self::$attributeItemType ??= new ObjectType([
+            'name' => 'AttributeItem',
+            'fields' => [
+                'id' => Type::string(),
+                'displayValue' => Type::string(),
+                'value' => Type::string(),
+            ],
+        ]);
+    }
+
+    private static function priceType(): ObjectType
+    {
+        return self::$priceType ??= new ObjectType([
             'name' => 'Price',
             'fields' => [
                 'amount' => Type::float(),
-                'currency' => new ObjectType([
-                    'name' => 'Currency',
-                    'fields' => [
-                        'label' => Type::string(),
-                        'symbol' => Type::string(),
-                    ]
-                ]),
+                'currency' => self::currencyType(),
             ],
         ]);
+    }
 
-        $productType = new ObjectType([
+    private static function currencyType(): ObjectType
+    {
+        return self::$currencyType ??= new ObjectType([
+            'name' => 'Currency',
+            'fields' => [
+                'label' => Type::string(),
+                'symbol' => Type::string(),
+            ]
+        ]);
+    }
+
+    private static function productType(): ObjectType
+    {
+        return self::$productType ??= new ObjectType([
             'name' => 'Product',
             'fields' => [
                 'id' => Type::nonNull(fn() => Type::string()),
                 'name' => Type::string(),
                 'inStock' => Type::boolean(),
-                'gallery' => Type::listOf(fn() => Type::string()),
+                'gallery' => Type::listOf(Type::string()),
                 'description' => Type::string(),
                 'category' => Type::string(),
                 'brand' => Type::string(),
-                'prices' => Type::listOf(fn() => $priceType),
+                'prices' => Type::listOf(self::priceType()),
                 'attributes' => [
-                    'type' => Type::listOf(fn() => $attributeType),
+                    'type' => Type::listOf(self::attributeType()),
                     'resolve' => fn($product) => \App\Resolvers\AttributeResolver::resolveByProductId($product['id'])
                 ],
             ],
         ]);
+    }
 
-        $categoryType = new ObjectType([
+    private static function categoryType(): ObjectType
+    {
+        return self::$categoryType ??= new ObjectType([
             'name' => 'Category',
             'fields' => [
                 'id' => Type::string(),
                 'name' => Type::string(),
             ],
         ]);
+    }
 
-        return new ObjectType([
+    private static function queryType(): ObjectType
+    {
+        return self::$queryType ??= new ObjectType([
             'name' => 'Query',
             'fields' => [
                 'products' => [
-                    'type' => Type::listOf(fn() => $productType),
+                    'type' => Type::listOf(self::productType()),
                     'args' => [
                         'category' => Type::string(),
                     ],
                     'resolve' => fn($rootValue, $args) => ProductResolver::resolveAll($args['category'] ?? null)
                 ],
                 'product' => [
-                    'type' => $productType,
+                    'type' => self::productType(),
                     'args' => [
                         'id' => Type::nonNull(fn() => Type::string()),
                     ],
                     'resolve' => fn($root, $args) => ProductResolver::resolveByID($args['id'])
                 ],
                 'categories' => [
-                    'type' => Type::listOf(fn() => $categoryType),
+                    'type' => Type::listOf(self::categoryType()),
                     'resolve' => fn() => CategoryResolver::resolveAll()
                 ],
             ],
@@ -161,7 +195,7 @@ final class GraphQL
 
     private static function orderAttributeInputType(): InputObjectType
     {
-        return new InputObjectType([
+        return self::$orderAttributeInputType ??= new InputObjectType([
             'name' => 'OrderAttributeInput',
             'fields' => [
                 'id' => Type::nonNull(fn() => Type::string()),
@@ -172,7 +206,7 @@ final class GraphQL
 
     private static function orderItemInputType(): InputObjectType
     {
-        return new InputObjectType([
+        return self::$orderItemInputType ??= new InputObjectType([
             'name' => 'OrderItemInput',
             'fields' => [
                 'product_id' => Type::nonNull(fn() => Type::string()),
@@ -184,19 +218,25 @@ final class GraphQL
             ]
         ]);
     }
+
+    private static function orderResponseType(): ObjectType
+    {
+        return self::$orderResponseType ??= new ObjectType([
+            'name' => 'OrderResponse',
+            'fields' => [
+                'id' => Type::string(),
+                'message' => Type::string(),
+            ]
+        ]);
+    }
+
     private static function mutationType(): ObjectType
     {
-        return new ObjectType([
+        return self::$mutationType ??= new ObjectType([
             'name' => 'Mutation',
             'fields' => [
                 'createOrder' => [
-                    'type' => new ObjectType([
-                        'name' => 'OrderResponse',
-                        'fields' => [
-                            'id' => Type::string(),
-                            'message' => Type::string(),
-                        ]
-                    ]),
+                    'type' => self::orderResponseType(),
                     'args' => [
                         'items' => Type::nonNull(fn() => Type::listOf(fn() => Type::nonNull(fn() => self::orderItemInputType()))),
                     ],
