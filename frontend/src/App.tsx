@@ -54,8 +54,8 @@ function App() {
           <Navbar categories={categories.map((category) => category.name)} />
           <CartOverlay />
           <Routes>
-            <Route path="/" element={<Navigate to={`/category/${categories[0].name}`} />} />
-            <Route path="/category/:name" element={<CategoryPage />} />
+            <Route path="/" element={<Navigate to={`/${categories[0].name}`} />} />
+            <Route path="/:name" element={<CategoryPage />} />
             <Route path="/product/:id" element={<ProductDetails />} />
           </Routes>
         </CartProvider>

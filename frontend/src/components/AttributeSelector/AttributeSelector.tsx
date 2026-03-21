@@ -18,7 +18,7 @@ export default function AttributeSelector({ attributes, selectedAttributes, onCh
                                     <button
                                         key={item.id}
                                         className={`product-details__swatch-btn ${isSelected ? 'product-details__swatch-btn--selected' : ''}`}
-                                        data-testid={`product-attribute-${kebabCase(attr.name)}-${kebabCase(item.value)}${isSelected ? '-selected' : ''}`}
+                                        data-testid={`product-attribute-${kebabCase(attr.name)}-${kebabCase(item.id)}${isSelected ? '-selected' : ''}`}
                                         style={{ backgroundColor: item.value }}
                                         onClick={() => onChange(attr.id, item.id)}
                                         title={item.displayValue}
@@ -29,7 +29,7 @@ export default function AttributeSelector({ attributes, selectedAttributes, onCh
                                 <button
                                     key={item.id}
                                     className={`product-details__text-btn ${isSelected ? 'product-details__text-btn--selected' : ''}`}
-                                    data-testid={`product-attribute-${kebabCase(attr.name)}-${kebabCase(item.value)}${isSelected ? '-selected' : ''}`}
+                                    data-testid={`product-attribute-${kebabCase(attr.name)}-${kebabCase(item.id)}${isSelected ? '-selected' : ''}`}
                                     onClick={() => onChange(attr.id, item.id)}
                                 >
                                     {item.value}

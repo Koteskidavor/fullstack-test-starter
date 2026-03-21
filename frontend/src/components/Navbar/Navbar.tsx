@@ -14,11 +14,11 @@ const Navbar: React.FC<NavbarProps> = ({ categories }) => {
             <div className="navbar__container">
                 <div className="navbar__left">
                     {categories.map((category) => {
-                        const isActive = location.pathname === `/category/${category}` || (location.pathname === '/' && category === categories[0]);
+                        const isActive = location.pathname === `/${category}` || (location.pathname === '/' && category === categories[0]);
                         return (
                             <Link
                                 key={category}
-                                to={`/category/${category}`}
+                                to={`/${category}`}
                                 className={`navbar__item ${isActive ? 'active' : ''}`}
                                 data-testid={isActive ? 'active-category-link' : 'category-link'}>
                                 <span className="navbar__itemText">{category}</span>
