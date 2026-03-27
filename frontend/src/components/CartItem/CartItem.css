@@ -1,8 +1,8 @@
 .cart-item {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 40px;
-    align-items: stretch;
+    margin-bottom: 48px;
+    align-items: center;
 }
 
 .cart-item__details {
@@ -101,6 +101,8 @@
     justify-content: space-between;
     align-items: center;
     margin-right: 8px;
+    align-self: stretch;
+    min-height: 190px;
 }
 
 .cart-item__qty-btn {
@@ -134,6 +136,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    align-self: center;
 }
 
 .cart-item__image {
