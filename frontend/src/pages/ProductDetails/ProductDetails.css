@@ -5,6 +5,9 @@
     margin: 60px 0;
     padding: 0 var(--page-padding);
     align-items: start;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .product-details__info {
@@ -133,7 +136,7 @@
     }
 
     .product-details__price-group {
-        margin-top: 16px;
+        margin-top: 5px;
         margin-bottom: 8px;
     }
 

@@ -56,6 +56,7 @@ export default memo(function ImageGallery({ images, productName }: ImageGalleryP
                     alt={productName}
                     className="product-details__main-image"
                     fetchPriority="high"
+                    loading="eager"
                     width="700"
                     height="700"
                     onError={(e) => {
