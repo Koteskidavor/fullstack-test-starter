@@ -5,6 +5,7 @@ export interface Category {
 export interface NavbarProps {
     categories: string[];
 }
+
 interface Currency {
     label: string;
     symbol: string;

@@ -56,10 +56,11 @@ export const cartReducer = (state: CartState, action: CartAction): CartState => 
                     items: state.items.filter(item => item.cartItemId !== cartItemId)
                 };
             }
+            const maxQuantity = Math.min(quantity, 99);
             return {
                 ...state,
                 items: state.items.map(item =>
-                    item.cartItemId === cartItemId ? { ...item, quantity } : item
+                    item.cartItemId === cartItemId ? { ...item, quantity: maxQuantity } : item
                 )
             };
         }

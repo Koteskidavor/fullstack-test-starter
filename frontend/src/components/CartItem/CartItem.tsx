@@ -2,6 +2,7 @@ import { memo, useCallback } from 'react';
 import type { CartItemProps, Attribute, AttributeItem } from '../../types';
 import { kebabCase } from '../../utils/kebabCase';
 import { getCurrencySymbol, getCurrencyAmount } from '../../utils/getCurrency';
+import fallbackImage from '../../assets/fallbackImage.jpg';
 import './CartItem.css';
 
 
@@ -35,24 +36,27 @@ const CartItem = memo(function CartItem({ item, onQuantityChange }: CartItemProp
 
                                     if (isColor) {
                                         return (
-                                            <div
+                                            <span
                                                 key={opt.id}
+                                                role="img"
+                                                aria-label={`${attr.name}: ${opt.displayValue}${isSelected ? ' (selected)' : ''}`}
                                                 className={`cart-item__attribute-btn cart-item__attribute-btn--color ${isSelected ? 'selected' : ''}`}
                                                 style={{ backgroundColor: opt.value }}
-                                                aria-label={opt.displayValue}
                                                 data-testid={`cart-item-attribute-${kebabCase(attr.name)}-${opt.displayValue}${isSelected ? '-selected' : ''}`}
                                             />
                                         );
                                     }
 
                                     return (
-                                        <div
+                                        <span
                                             key={opt.id}
+                                            role="presentation"
+                                            aria-label={`${attr.name}: ${opt.displayValue}${isSelected ? ' (selected)' : ''}`}
                                             className={`cart-item__attribute-btn cart-item__attribute-btn--text ${isSelected ? 'selected' : ''}`}
                                             data-testid={`cart-item-attribute-${kebabCase(attr.name)}-${opt.displayValue}${isSelected ? '-selected' : ''}`}
                                         >
                                             {opt.value}
-                                        </div>
+                                        </span>
                                     );
                                 })}
                             </div>
@@ -82,8 +86,17 @@ const CartItem = memo(function CartItem({ item, onQuantityChange }: CartItemProp
             </div>
 
             <div className="cart-item__image-container">
-                <img src={product.gallery[0]} alt={product.name} className="cart-item__image" loading="lazy" />
+                <img
+                    src={product.gallery[0]}
+                    alt={product.name}
+                    className="cart-item__image"
+                    loading="lazy"
+                    onError={(e) => {
+                        e.currentTarget.src = fallbackImage;
+                    }}
+                />
             </div>
+
         </div>
     );
 });

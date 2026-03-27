@@ -51,7 +51,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
         dispatch({
             type: 'ADD_TO_CART',
-            payload: { product, selectedAttributes: defaultAttributes, showOverlay: false },
+            payload: { product, selectedAttributes: defaultAttributes, showOverlay: true },
         });
     }, []);
 

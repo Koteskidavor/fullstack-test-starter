@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { NotificationContext, type Notification, type NotificationType } from './NotificationContext';
+import { NotificationContext, type Notification, type NotificationType } from './context/NotificationContext';
 import './Notification.css';
 
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -14,6 +14,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
     const timer = setTimeout(() => {
       setNotifications((prev) => prev.filter((n) => n.id !== id));
+
+      timerRef.current = timerRef.current.filter((t) => t !== timer);
     }, 4000);
 
     timerRef.current.push(timer);

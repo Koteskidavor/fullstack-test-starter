@@ -1,6 +1,6 @@
 .cart-backdrop {
     position: fixed;
-    top: 78px;
+    top: var(--navbar-height);
     left: 0;
     right: 0;
     bottom: 0;
@@ -115,4 +115,48 @@
     background: #cccccc;
     cursor: not-allowed;
     color: #666666;
+}
+
+@media (max-width: 1024px) {
+    .cart-backdrop {
+        top: var(--navbar-height);
+    }
+
+    .cart-overlay {
+        width: 400px;
+        margin-right: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cart-backdrop {
+        top: 0;
+        justify-content: flex-end;
+        align-items: flex-end;
+    }
+
+    .cart-overlay {
+        width: 100%;
+        max-height: 85vh;
+        margin-right: 0;
+        border-radius: 16px 16px 0 0;
+        padding: 24px 16px;
+        gap: 24px;
+        animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(100%);
+        }
+
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    .cart-overlay__title {
+        font-size: 18px;
+        text-align: center;
+    }
 }

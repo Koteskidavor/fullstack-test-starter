@@ -43,16 +43,23 @@ Welcome to my repository for the Scandiweb Junior FullStack Test Assignment.
 ### Frontend Setup
 1. Navigate to the `frontend/` directory.
 2. Run `npm install` to install frontend dependencies.
-3. Run `npm run dev` to start the Vite development server.
-4. Access the application at `http://localhost:5173`.
+3. Open `/frontend/src/services/graphqlClient.ts` and update the API URL to match your backend URL:
+   ```ts
+   const API_URL = 'http://localhost:8000/public/index.php';
+   ```
+4. Run `npm run dev` to start the Vite development server.
+5. Access the application at `http://localhost:5173`.
 
 ---
 
 ## 🏗️ Architecture Decisions
 
-### Why this stack?
-- **React Context API**: Used Context API to keep state management lightweight and intuitive, skipping the setup complexity while maintaining global state accessibility.
-- **Performance First**: Split-chunking (manual chunks) and lazy loading are implemented to improve initial load and the app performance.
+### Approach
+
+Rather than relying on frameworks or heavy abstractions, the goal was to:
+- Keep the implementation **lightweight and explicit**
+- Prioritize **performance and responsiveness**
+- Ensure the codebase remains **scalable and easy to extend**
 
 ### Folder Structure Reasoning
 The project is split into two main sections:
@@ -73,12 +80,37 @@ The project is split into two main sections:
 
 ---
 
+### Key Considerations
+
+- **Performance**:
+  - Memoization is used to minimize unnecessary re-renders
+  - API requests are controlled using `AbortController` to prevent race conditions
+  - Code splitting is applied to reduce initial load time
+
+- **Scalability (Backend)**:
+  - Factory Pattern is used to dynamically instantiate product types
+  - Polymorphism and abstract classes allow consistent handling of different product structures
+  - This makes it easy to introduce new product types without modifying existing logic
+
+- **Separation of Concerns**:
+  - Frontend handles UI and state
+  - Backend is responsible for data and business logic
+  - GraphQL acts as a flexible contract between the two
+
+- **Security & Stability**:
+  - Safe HTML parsing is applied to prevent injection risks
+  - Error handling is added across API and UI layers for better resilience
+
+---
+
 ## 🧠 State Management Approach
 
-We use **React Context API** combined with the **`useReducer`** hook for global state. This allows for predictable state transitions without the complexity of external libraries.
+We use **React Context API** combined with the **`useReducer`**, providing predictable state transitions without the complexity of external libraries.
 
-- **CartContext**: Manages the shopping cart, including adding/removing items, updating quantities, and persisting attribute selections (like size and color). Data is persisted in **`localStorage`** for a seamless user experience across sessions.
+- **CartContext**: Handles cart state (items, quantities, selected attributes) and persists data in `localStorage`.
 - **NotificationContext**: Lightweight feedback loop to keep users informed during the ordering process, ensuring clear communication for every success or failure.
+
+Contents are split to keep the architecture simple, modular, and easy to maintain.
 
 ## 🧪 QA Automation Test
 ![Automation QA test](frontend/src/assets/screenshots/qatest.png)

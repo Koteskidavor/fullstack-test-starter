@@ -1,8 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, memo } from 'react';
 import type { ImageGalleryProps } from '../../types';
+import fallbackImage from '../../assets/fallbackImage.jpg';
 import './ImageGallery.css';
 
-export default function ImageGallery({ images, productName }: ImageGalleryProps) {
+
+export default memo(function ImageGallery({ images, productName }: ImageGalleryProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const handlePrev = useCallback((e: React.MouseEvent) => {
@@ -24,7 +26,18 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
                         className={`product-details__thumb-btn ${currentIndex === i ? 'product-details__thumb-btn--active' : ''}`}
                         onClick={() => setCurrentIndex(i)}
                     >
-                        <img src={img} alt={`${productName} thumbnail ${i + 1}`} className="product-details__thumb-img" loading="lazy" decoding="async" />
+                        <img
+                            src={img}
+                            alt={`${productName} thumbnail ${i + 1}`}
+                            className="product-details__thumb-img"
+                            loading="lazy"
+                            decoding="async"
+                            width={100}
+                            height={100}
+                            onError={(e) => {
+                                e.currentTarget.src = fallbackImage;
+                            }}
+                        />
                     </button>
                 ))}
             </div>
@@ -38,7 +51,18 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
                         &#10094;
                     </button>
                 )}
-                <img src={images[currentIndex]} alt={productName} className="product-details__main-image" fetchPriority="high" />
+                <img
+                    src={images[currentIndex]}
+                    alt={productName}
+                    className="product-details__main-image"
+                    fetchPriority="high"
+                    width="700"
+                    height="700"
+                    onError={(e) => {
+                        e.currentTarget.src = fallbackImage;
+                    }}
+                />
+
                 {images.length > 1 && (
                     <button
                         className="product-details__arrow product-details__arrow--right"
@@ -51,4 +75,4 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
             </div>
         </div>
     )
-}
+});

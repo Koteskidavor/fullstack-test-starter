@@ -1,4 +1,4 @@
-import { lazy, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { graphqlRequest } from './services/graphqlClient';
 import { GET_CATEGORIES } from './graphql/getCategories';
@@ -8,35 +8,46 @@ import { NotificationProvider } from './components/Notification/Notification';
 import CartOverlay from './components/CartOverlay/CartOverlay';
 import StatusMessage from './components/StatusMessage/StatusMessage';
 import type { Category } from './types';
-
-const CategoryPage = lazy(() => import("./pages/CategoryPage/CategoryPage"));
-const ProductDetails = lazy(() => import("./pages/ProductDetails/ProductDetails"));
+import CategoryPage from './pages/CategoryPage/CategoryPage';
+import ProductDetails from './pages/ProductDetails/ProductDetails';
 
 
 function App() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
     async function fetchCategories() {
       try {
+        setLoading(true);
         const data = await graphqlRequest<{ categories: Category[] }>(
-          GET_CATEGORIES
+          GET_CATEGORIES,
+          {},
+          controller.signal
         );
-        setCategories(data.categories);
+        if (!controller.signal.aborted) {
+          setCategories(data.categories);
+        }
       } catch (error) {
-        console.error(error);
-        setError("Failed to load categories. Please try again later.");
+        if (!controller.signal.aborted) {
+          console.error(error);
+          setError("Failed to load categories. Please try again later.");
+        }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     }
     fetchCategories();
+
+    return () => controller.abort();
   }, []);
 
   if (loading) {
-    return <StatusMessage message="Loading" />
+    return <StatusMessage message="Loading..." />
   }
 
   if (error) {
@@ -63,5 +74,7 @@ function App() {
     </Router>
   )
 }
+
+
 
 export default App

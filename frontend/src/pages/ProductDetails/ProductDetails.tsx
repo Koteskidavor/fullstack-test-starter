@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { useParams } from 'react-router-dom';
 import { graphqlRequest } from '../../services/graphqlClient';
 import { GET_PRODUCT } from '../../graphql/getProduct';
@@ -12,7 +12,7 @@ import { getCurrencySymbol, getCurrencyAmount } from '../../utils/getCurrency';
 import './ProductDetails.css';
 
 
-export default function ProductDetails() {
+export default memo(function ProductDetails() {
     const { id } = useParams<{ id: string }>();
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
@@ -22,19 +22,32 @@ export default function ProductDetails() {
 
     useEffect(() => {
         if (!id) return;
+
+        const controller = new AbortController();
+
         setLoading(true);
         setError(null);
-        graphqlRequest<{ product: Product }>(GET_PRODUCT, { id })
+
+        graphqlRequest<{ product: Product }>(GET_PRODUCT, { id }, controller.signal)
             .then((data) => {
-                setProduct(data.product);
-                setSelectedAttributes({});
-                setLoading(false);
+                if (!controller.signal.aborted) {
+                    setProduct(data.product);
+                    setSelectedAttributes({});
+                }
             })
             .catch((err) => {
-                console.error(err);
-                setError("Failed to load product details.");
-                setLoading(false);
+                if (!controller.signal.aborted) {
+                    console.error(err);
+                    setError("Failed to load product details.");
+                }
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
             });
+
+        return () => controller.abort();
     }, [id]);
 
     if (loading) return <StatusMessage message="Loading..." />;
@@ -93,4 +106,4 @@ export default function ProductDetails() {
             </div>
         </main>
     );
-}
+});
