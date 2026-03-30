@@ -11,7 +11,6 @@ const CartOverlay: React.FC = () => {
     const { notify } = useNotify();
     const overlayRef = useRef<HTMLDivElement>(null);
     const [isPlacingOrder, setIsPlacingOrder] = useState(false);
-
     useScrollLock(state.isOverlayOpen);
 
     const handleBackdropClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
