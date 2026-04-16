@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, memo } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import logo from '../../assets/logo.svg';
 import CartIcon from '../Icons/CartIcon';
 import type { NavbarProps } from '../../types'
@@ -75,4 +75,4 @@ const Navbar: React.FC<NavbarProps> = ({ categories }) => {
     );
 };
 
-export default memo(Navbar);
+export default Navbar;

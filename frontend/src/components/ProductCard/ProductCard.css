@@ -1,3 +1,9 @@
+.product-card-wrapper {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
 .product-card__link {
     text-decoration: none;
     color: inherit;

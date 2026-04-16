@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useMemo, useCallback } from 'react';
+import React, { useReducer, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { cartReducer } from './CartReducer';
 import { CartContext } from './CartContext';
@@ -29,18 +29,12 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         localStorage.setItem('cartState', JSON.stringify(state));
     }, [state]);
 
-    const totalItems = useMemo(
-        () => state.items.reduce((total, item) => total + item.quantity, 0),
-        [state.items]
-    );
+    const totalItems = state.items.reduce((total, item) => total + item.quantity, 0);
 
-    const cartTotal = useMemo(
-        () => state.items.reduce((total, item) => {
-            const price = item.product.prices?.[0]?.amount ?? 0;
-            return total + price * item.quantity;
-        }, 0),
-        [state.items]
-    );
+    const cartTotal = state.items.reduce((total, item) => {
+        const price = item.product.prices?.[0]?.amount ?? 0;
+        return total + price * item.quantity;
+    }, 0);
 
     const addToCartWithDefaults = useCallback((product: Product) => {
         const defaultAttributes: Record<string, string> = {};

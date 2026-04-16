@@ -1,7 +1,6 @@
-import { useEffect, useState, memo } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { graphqlRequest } from '../../services/graphqlClient';
-import { GET_PRODUCT } from '../../graphql/getProduct';
+import { getProduct } from '../../graphql/getProduct';
 import type { Product } from '../../types/index';
 import { useCart } from '../../components/CartOverlay/context/CartContext';
 import { parseHtml } from '../../utils/parseHtml';
@@ -12,7 +11,7 @@ import { getCurrencySymbol, getCurrencyAmount } from '../../utils/getCurrency';
 import './ProductDetails.css';
 
 
-export default memo(function ProductDetails() {
+export default function ProductDetails() {
     const { id } = useParams<{ id: string }>();
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
@@ -28,7 +27,7 @@ export default memo(function ProductDetails() {
         setLoading(true);
         setError(null);
 
-        graphqlRequest<{ product: Product }>(GET_PRODUCT, { id }, controller.signal)
+        getProduct(id, controller.signal)
             .then((data) => {
                 if (!controller.signal.aborted) {
                     setProduct(data.product);
@@ -75,7 +74,7 @@ export default memo(function ProductDetails() {
 
     return (
         <main className="product-details">
-            <ImageGallery key={product.id} images={product.gallery} productName={product.name} />
+            <ImageGallery images={product.gallery} productName={product.name} />
             <div className="product-details__info">
                 <h1 className="product-details__brand">{product.brand}</h1>
                 <h2 className="product-details__name">{product.name}</h2>
@@ -106,4 +105,4 @@ export default memo(function ProductDetails() {
             </div>
         </main>
     );
-});
+}

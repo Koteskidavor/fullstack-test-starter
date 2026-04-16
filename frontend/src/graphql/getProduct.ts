@@ -1,4 +1,7 @@
-export const GET_PRODUCT = `
+import { graphqlRequest } from "../services/graphqlClient";
+import type { Product } from '../types';
+
+const GET_PRODUCT = `
   query GetProduct($id: String!) {
     product(id: $id) {
       id
@@ -28,3 +31,7 @@ export const GET_PRODUCT = `
     }
   }
 `;
+
+export const getProduct = async (id: string, signal?: AbortSignal) => {
+  return graphqlRequest<{ product: Product }>(GET_PRODUCT, { id }, signal);
+}

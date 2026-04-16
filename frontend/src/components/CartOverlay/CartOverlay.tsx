@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, memo } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useCart } from './context/CartContext';
 import CartItem from '../CartItem/CartItem';
 import { createOrder } from '../../graphql/createOrder';
@@ -88,4 +88,4 @@ const CartOverlay: React.FC = () => {
     );
 };
 
-export default memo(CartOverlay);
+export default CartOverlay;

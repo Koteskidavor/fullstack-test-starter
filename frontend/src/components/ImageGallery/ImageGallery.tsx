@@ -1,10 +1,10 @@
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback } from 'react';
 import type { ImageGalleryProps } from '../../types';
-import fallbackImage from '../../assets/fallbackImage.jpg';
+import { getOptimizedImageUrl } from '../../utils/getImageUrl';
 import './ImageGallery.css';
 
 
-export default memo(function ImageGallery({ images, productName }: ImageGalleryProps) {
+export default function ImageGallery({ images, productName }: ImageGalleryProps) {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const handlePrev = useCallback((e: React.MouseEvent) => {
@@ -27,16 +27,13 @@ export default memo(function ImageGallery({ images, productName }: ImageGalleryP
                         onClick={() => setCurrentIndex(i)}
                     >
                         <img
-                            src={img}
+                            src={getOptimizedImageUrl(img, 100)}
                             alt={`${productName} thumbnail ${i + 1}`}
                             className="product-details__thumb-img"
                             loading="lazy"
                             decoding="async"
                             width={100}
                             height={100}
-                            onError={(e) => {
-                                e.currentTarget.src = fallbackImage;
-                            }}
                         />
                     </button>
                 ))}
@@ -52,16 +49,13 @@ export default memo(function ImageGallery({ images, productName }: ImageGalleryP
                     </button>
                 )}
                 <img
-                    src={images[currentIndex]}
+                    src={getOptimizedImageUrl(images[currentIndex], 700)}
                     alt={productName}
                     className="product-details__main-image"
                     fetchPriority="high"
                     loading="eager"
-                    width="700"
-                    height="700"
-                    onError={(e) => {
-                        e.currentTarget.src = fallbackImage;
-                    }}
+                    width={700}
+                    height={700}
                 />
 
                 {images.length > 1 && (
@@ -76,4 +70,4 @@ export default memo(function ImageGallery({ images, productName }: ImageGalleryP
             </div>
         </div>
     )
-});
+};

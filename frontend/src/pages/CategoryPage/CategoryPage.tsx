@@ -1,14 +1,13 @@
-import { useCallback, useEffect, useState, memo } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Product } from "../../types";
 import { useParams } from "react-router-dom";
-import { graphqlRequest } from "../../services/graphqlClient";
-import { GET_PRODUCTS } from "../../graphql/getProducts";
+import { getProducts } from "../../graphql/getProducts";
 import { useCart } from "../../components/CartOverlay/context/CartContext";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import StatusMessage from "../../components/StatusMessage/StatusMessage";
 import "./CategoryPage.css";
 
-export default memo(function CategoryPage() {
+export default function CategoryPage() {
     const { name } = useParams<{ name: string }>();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -31,7 +30,7 @@ export default memo(function CategoryPage() {
 
         const category = name === 'all' ? '' : name;
 
-        graphqlRequest<{ products: Product[] }>(GET_PRODUCTS, { category }, controller.signal)
+        getProducts(category, controller.signal)
             .then((data) => {
                 if (!controller.signal.aborted) {
                     setProducts(data.products);
@@ -85,4 +84,4 @@ export default memo(function CategoryPage() {
             )}
         </main>
     );
-});
+}

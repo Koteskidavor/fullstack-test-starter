@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { graphqlRequest } from './services/graphqlClient';
-import { GET_CATEGORIES } from './graphql/getCategories';
+import { getCategories } from './graphql/getCategories';
 import Navbar from './components/Navbar/Navbar';
 import { CartProvider } from './components/CartOverlay/context/CartProvider';
 import { NotificationProvider } from './components/Notification/Notification';
@@ -22,11 +21,7 @@ function App() {
     async function fetchCategories() {
       try {
         setLoading(true);
-        const data = await graphqlRequest<{ categories: Category[] }>(
-          GET_CATEGORIES,
-          {},
-          controller.signal
-        );
+        const data = await getCategories(controller.signal);
         if (!controller.signal.aborted) {
           setCategories(data.categories);
         }
