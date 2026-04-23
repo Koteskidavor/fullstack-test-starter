@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 
-
 export const useScrollLock = (isLocked: boolean) => {
   const lockCountRef = useRef(0);
   useEffect(() => {

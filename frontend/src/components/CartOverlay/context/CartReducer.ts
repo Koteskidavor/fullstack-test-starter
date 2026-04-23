@@ -1,5 +1,6 @@
 import type { CartState, CartAction, CartItem } from '../../../types';
 
+
 export const generateCartItemId = (productId: string, selectedAttributes: Record<string, string>): string => {
     const sortedAttributes = Object.entries(selectedAttributes)
         .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))

@@ -64,10 +64,10 @@ Rather than relying on frameworks or heavy abstractions, the goal was to:
 ### Folder Structure Reasoning
 The project is split into two main sections:
 - **`src/` (Backend)**: Contains the PHP logic.
-  - `Models/`: Domain entities and data logic.
-  - `Resolvers/`: Logic that bridges GraphQL queries to the Models.
+  - `Models/`: Domain models with strict typing and validation logic.
+  - `Repositories/`: Data access layer responsible for all database interactions.
+  - `Resolvers/`: Service layer bridging GraphQL queries to repositories.
   - `Controller/`: Entry point (GraphQL handler).
-  - `Factories/`: Responsible for instantiating complex model objects.
 - **`frontend/src/` (Frontend)**:
   - `components/`: Reusable UI elements (ProductCard, CartItem, etc.).
     - Note: Complex components like **`CartOverlay`** include their own localized **`context/`** to keep state logic closer to the UI, making it modular and easier to debug.
@@ -83,14 +83,15 @@ The project is split into two main sections:
 ### Key Considerations
 
 - **Performance**:
-  - Memoization is used to minimize unnecessary re-renders
-  - API requests are controlled using `AbortController` to prevent race conditions
-  - Code splitting is applied to reduce initial load time
+  - **React Compiler**: Utilizing the latest React 19 compiler features to automatically handle component memoization, ensuring optimal rendering without manual overhead.
+  - **AbortController**: API requests are controlled to prevent race conditions and unnecessary network traffic.
+  - **Code Splitting**: Applied via dynamic imports to reduce the initial bundle size and improve load times.
 
-- **Scalability (Backend)**:
-  - Factory Pattern is used to dynamically instantiate product types
-  - Polymorphism and abstract classes allow consistent handling of different product structures
-  - This makes it easy to introduce new product types without modifying existing logic
+- **Scalability & Clean Code (Backend)**:
+  - **Repository Pattern**: Introduced a dedicated layer for database access, decoupling SQL logic from the rest of the application.
+  - **Domain Models (DTOs)**: Models are strictly typed and responsible only for data representation, ensuring a clear separation of concerns.
+  - **Dependency Injection**: Dependencies are pushed down from the entry point (`index.php`), making the application easier to test and modify without hidden coupling.
+  - **Defensive Programming**: Extensive validation and database transactions ensure data integrity and robust error handling.
 
 - **Separation of Concerns**:
   - Frontend handles UI and state
@@ -111,6 +112,3 @@ We use **React Context API** combined with the **`useReducer`**, providing predi
 - **NotificationContext**: Lightweight feedback loop to keep users informed during the ordering process, ensuring clear communication for every success or failure.
 
 Contents are split to keep the architecture simple, modular, and easy to maintain.
-
-## 🧪 QA Automation Test
-![Automation QA test](frontend/src/assets/screenshots/qatest.png)

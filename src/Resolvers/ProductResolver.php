@@ -1,73 +1,56 @@
 <?php
 declare(strict_types=1);
+
 namespace App\Resolvers;
 
-use App\Database;
-use App\Factories\ProductFactory;
-use PDO;
+use App\Repositories\ProductRepository;
+use App\Resolvers\PriceResolver;
+use App\Models\Product;
+use Exception;
+use RuntimeException;
 
 final class ProductResolver
 {
-    public static function resolveAll(?string $category = null): array
+    private ProductRepository $productRepository;
+    private PriceResolver $priceResolver;
+
+    public function __construct(ProductRepository $productRepository, PriceResolver $priceResolver)
     {
-        $pdo = Database::getConnection();
-
-        if ($category && $category !== 'all') {
-            $stmt = $pdo->prepare("SELECT * FROM products WHERE category = ?");
-            $stmt->execute([$category]);
-        }
-        else {
-            $stmt = $pdo->query("SELECT * FROM products");
-        }
-
-        $productsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $products = [];
-        foreach ($productsData as $productData) {
-            $productData = self::fetchFullProductData($productData, $pdo);
-            $product = ProductFactory::create($productData);
-            $products[] = $product->toArray();
-        }
-
-        return $products;
+        $this->productRepository = $productRepository;
+        $this->priceResolver = $priceResolver;
     }
 
-    public static function resolveByID(string $id): ?array
+    public function resolveAll(?string $category = null): array
     {
-        $pdo = Database::getConnection();
-        $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
-        $stmt->execute([$id]);
-        $productData = $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            $products = $this->productRepository->findAll($category);
 
-        if (!$productData) {
-            return null;
+            if (empty($products)) {
+                throw new RuntimeException('No products found' . ($category ? " in category '{$category}'" : ''));
+            }
+
+            return $products;
+        } catch (Exception $e) {
+            throw new RuntimeException('Failed to retrieve products: ' . $e->getMessage());
         }
-
-        $productData = self::fetchFullProductData($productData, $pdo);
-        $product = ProductFactory::create($productData);
-
-        return $product->toArray();
     }
 
-    private static function fetchFullProductData(array $product, PDO $pdo): array
+    public function resolveById(string $id): ?Product
     {
-        $priceStmt = $pdo->prepare("
-            SELECT p.amount, p.currency as label, COALESCE(c.symbol, '$') as symbol
-            FROM prices p
-            LEFT JOIN currencies c ON p.currency = c.label
-            WHERE p.product_id = ?
-        ");
-        $priceStmt->execute([$product['id']]);
+        try {
+            $product = $this->productRepository->findById($id);
 
-        $prices = $priceStmt->fetchAll(PDO::FETCH_ASSOC);
-        $product['db_prices'] = array_map(fn($row) => [
-        'amount' => (float)$row['amount'],
-        'currency' => [
-        'label' => $row['label'],
-        'symbol' => $row['symbol']
-        ]
-        ], $prices);
-
-        return $product;
+            return $product;
+        } catch (Exception $e) {
+            throw new RuntimeException("Failed to retrieve product {$id}: " . $e->getMessage());
+        }
+    }
+    public function resolvePrices(string $productId): array
+    {
+        try {
+            return $this->priceResolver->resolvePrices($productId);
+        } catch (Exception $e) {
+            throw new RuntimeException("Failed to retrieve prices for product {$productId}: " . $e->getMessage());
+        }
     }
 }

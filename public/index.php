@@ -1,6 +1,18 @@
 <?php
 declare(strict_types=1);
 
+use App\Controller\GraphQL;
+use App\Database;
+use App\Repositories\ProductRepository;
+use App\Repositories\CategoryRepository;
+use App\Repositories\OrderRepository;
+use App\Repositories\AttributeRepository;
+use App\Repositories\PriceRepository;
+use App\Resolvers\ProductResolver;
+use App\Resolvers\CategoryResolver;
+use App\Resolvers\OrderResolver;
+use App\Resolvers\AttributeResolver;
+use App\Resolvers\PriceResolver;
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
@@ -26,6 +38,20 @@ require_once __DIR__ . '/../vendor/autoload.php';
 $dotenv = \Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
-use App\Controller\GraphQL;
+$pdo = Database::getConnection();
 
-GraphQL::handle();
+$productRepository = new ProductRepository($pdo);
+$categoryRepository = new CategoryRepository($pdo);
+$orderRepository = new OrderRepository($pdo);
+$attributeRepository = new AttributeRepository($pdo);
+$priceRepository = new PriceRepository($pdo);
+
+$priceResolver = new PriceResolver($priceRepository);
+$productResolver = new ProductResolver($productRepository, $priceResolver);
+$categoryResolver = new CategoryResolver($categoryRepository);
+$orderResolver = new OrderResolver($orderRepository);
+$attributeResolver = new AttributeResolver($attributeRepository);
+
+$graphqlController = new GraphQL($productResolver, $categoryResolver, $orderResolver, $attributeResolver);
+
+$graphqlController->handle();

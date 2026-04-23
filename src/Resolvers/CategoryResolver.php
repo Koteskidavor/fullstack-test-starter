@@ -1,21 +1,27 @@
 <?php
 declare(strict_types=1);
+
 namespace App\Resolvers;
 
-use App\Models\Category;
+use App\Repositories\CategoryRepository;
+use Exception;
+use RuntimeException;
 
-class CategoryResolver
+final class CategoryResolver
 {
-    public static function resolveAll(): array
-    {
-        $categories = Category::findAll();
+    private CategoryRepository $categoryRepository;
 
-        $result = [];
-        foreach ($categories as $catModel) {
-            $result[] = [
-                'name' => $catModel->getName()
-            ];
+    public function __construct(CategoryRepository $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
+
+    public function resolveAll(): array
+    {
+        try {
+            return $this->categoryRepository->findAll();
+        } catch (Exception $e) {
+            throw new RuntimeException('Failed to retrieve categories: ' . $e->getMessage());
         }
-        return $result;
     }
 }
